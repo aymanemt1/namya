@@ -1,1 +1,1 @@
-{"dependencies":{"@google/genai":"^1.0.0","dotenv":"^16.4.5","express":"^4.21.2"},"description":"A simplified personal AI assistant — chat UI + Gemini with function-calling tools","main":"server.js","name":"mini-assistant","scripts":{"start":"node server.js"},"type":"module","version":"1.0.0"}
+{"dependencies":{"@google/genai":"^1.0.0","dotenv":"^16.4.5","express":"^4.21.2"},"description":"Namya — a personal AI assistant built by Aymane Moutoute","main":"server.js","name":"namya","scripts":{"start":"node server.js"},"type":"module","version":"1.0.0"}
