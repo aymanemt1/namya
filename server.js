@@ -8,8 +8,8 @@ dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-if (!process.env.GROQ_API_KEY) {
-  console.error("Missing GROQ_API_KEY — copy .env.example to .env and paste your free key from https://console.groq.com/keys");
+if (!process.env.GROQ_API_KEY && !process.env.NAMYA_API_BASE) {
+  console.error("Missing GROQ_API_KEY — copy .env.example to .env. For 100% local mode, set NAMYA_API_BASE=http://localhost:11434/v1 instead.");
   process.exit(1);
 }
 
