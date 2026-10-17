@@ -8,8 +8,8 @@ dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-if (!process.env.GEMINI_API_KEY) {
-  console.error("Missing GEMINI_API_KEY — copy .env.example to .env and paste your free key from https://aistudio.google.com/apikey");
+if (!process.env.GROQ_API_KEY) {
+  console.error("Missing GROQ_API_KEY — copy .env.example to .env and paste your free key from https://console.groq.com/keys");
   process.exit(1);
 }
 
