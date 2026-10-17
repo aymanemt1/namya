@@ -14,15 +14,18 @@ if (!process.env.GEMINI_API_KEY) {
 }
 
 const app = express();
-app.use(express.json({ limit: "1mb" }));
+app.use(express.json({ limit: "15mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.post("/api/chat", async (req, res) => {
   try {
-    const { messages } = req.body;
+    const { messages, memories, images } = req.body;
     if (!Array.isArray(messages)) return res.status(400).json({ error: "messages must be an array" });
-    const reply = await handleChat(messages);
-    res.json({ reply });
+    const { reply, newMemories } = await handleChat(messages, {
+      memories: Array.isArray(memories) ? memories : [],
+      images: Array.isArray(images) ? images : [],
+    });
+    res.json({ reply, newMemories });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "Assistant error — check server logs and your API key." });
@@ -30,4 +33,4 @@ app.post("/api/chat", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Mini assistant running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Namya running at http://localhost:${PORT}`));

@@ -1,13 +1,24 @@
-# Mini Assistant
+# Namya — AI Assistant
 
-A simplified personal AI assistant: a chat UI powered by Google Gemini,
-running on an **adapted** version of the system prompt, with 3 function-calling
-tools: `get_current_time`, `web_search`, `calculate`. Uses Gemini 3.8 Flash.
+**Namya** ("Ayman" reversed) — a personal AI assistant built by Aymane
+Moutoute. Chat UI powered by Google Gemini 3.8 Flash, running on an
+adapted system prompt, with function-calling tools and image vision.
+
+## Tools
+
+- `get_current_time` — current date/time
+- `web_search` — quick web lookup (DuckDuckGo instant answers)
+- `fetch_page` — read the text content of any web page URL
+- `calculate` — math expressions
+- `execute_js` — sandboxed JavaScript expressions (Math, JSON, Array…)
+- `save_memory` — remembers durable facts about the user (stored in the
+  browser's localStorage, sent with each request)
+- **Images** — attach a photo; Gemini sees and answers about it
 
 ## Setup (5 minutes)
 
 1. Get a **free** Gemini API key: https://aistudio.google.com/apikey
-   (no credit card needed)
+   (no credit card needed — note: free tier ≈ 20 requests/day)
 2. Copy the env file and paste your key:
    ```bash
    cp .env.example .env
@@ -23,19 +34,18 @@ tools: `get_current_time`, `web_search`, `calculate`. Uses Gemini 3.8 Flash.
 
 ## What's inside
 
-- `system-prompt.md` — the adapted system prompt (personality, values,
-  writing style, safety). Edit it to change how the assistant behaves.
+- `system-prompt.md` — the adapted system prompt (identity, personality,
+  values, writing style, safety). Edit it to change how Namya behaves.
 - `lib/assistant.js` — shared Gemini + tools logic (used by both).
 - `server.js` — local dev server (Express). Run with `npm start`.
 - `api/chat.js` — Vercel serverless function (same logic, production).
-- `public/index.html` — the chat UI (served statically).
+- `public/index.html` — the chat UI (served statically): image attach,
+  localStorage memory, memory viewer (🧠).
 
-## Make it yours
+## Deploy
 
-- **More tools:** add a function declaration in `server.js` + its
-  implementation in `runTool()` (e.g. weather, notes, timers).
-- **Memory:** store conversation summaries in a file/DB and prepend them
-  to the system instruction — that's the biggest upgrade after tools.
-- **Deploy:** push to GitHub, then import on Vercel — `api/chat.js`
-  becomes a serverless function and `public/` is served statically.
-  Add `GEMINI_API_KEY` in Vercel → Settings → Environment Variables.
+Push to GitHub, then deploy on Vercel — `api/chat.js` becomes a
+serverless function and `public/` is served statically. Add
+`GEMINI_API_KEY` in Vercel → Settings → Environment Variables
+(Production + Preview + Development), then redeploy from the dashboard
+so the deployment picks up the variable.
