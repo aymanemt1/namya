@@ -42,6 +42,17 @@
   .who .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #58d68d; display: inline-block; }
   #meminfo { font-size: 13px; color: var(--text-dim); cursor: pointer; padding: 6px 10px; border-radius: 16px; background: var(--bg-soft); border: 1px solid var(--border); }
   #meminfo:empty { display: none; }
+  /* ---- model picker ---- */
+  #modelbar {
+    display: flex; justify-content: center; padding: 8px 18px 0;
+    max-width: 780px; width: 100%; margin: 0 auto;
+  }
+  #modelsel {
+    background: var(--bg-soft); color: var(--text-dim); border: 1px solid var(--border);
+    border-radius: 16px; padding: 6px 12px; font-size: 13px; outline: none; cursor: pointer;
+    max-width: 100%;
+  }
+  #modelsel:focus { border-color: var(--accent); color: var(--text); }
   /* ---- chat ---- */
   #chat {
     flex: 1; overflow-y: auto; padding: 22px 18px 12px;
@@ -105,6 +116,7 @@
   </div>
   <div id="meminfo" title="What Namya remembers about you"></div>
 </header>
+<div id="modelbar"><select id="modelsel" title="Choose a model"></select></div>
 <div id="chat"></div>
 <div id="preview"><img id="previewimg" alt="attachment preview"><button id="clearimg">✕ remove</button></div>
 <div id="bar">
@@ -125,8 +137,37 @@
   const previewImg = document.getElementById("previewimg");
   const clearImg = document.getElementById("clearimg");
   const memInfo = document.getElementById("meminfo");
+  const modelSel = document.getElementById("modelsel");
   const history = [];
   let pendingImage = null;
+  let currentModel = localStorage.getItem("namya_model") || "";
+
+  // ---- model picker ----
+  async function loadModels() {
+    try {
+      const r = await fetch("/api/models");
+      const j = await r.json();
+      const models = j.models || [];
+      modelSel.innerHTML = "";
+      for (const m of models) {
+        const o = document.createElement("option");
+        o.value = m.id;
+        o.textContent = m.label + (m.tools ? "" : " (chat only)");
+        modelSel.appendChild(o);
+      }
+      const ids = models.map((m) => m.id);
+      if (!ids.includes(currentModel)) currentModel = j.def || ids[0] || "";
+      modelSel.value = currentModel;
+      localStorage.setItem("namya_model", currentModel);
+    } catch {
+      modelSel.style.display = "none";
+    }
+  }
+  modelSel.onchange = () => {
+    currentModel = modelSel.value;
+    localStorage.setItem("namya_model", currentModel);
+  };
+  loadModels();
 
   let memories = [];
   try { memories = JSON.parse(localStorage.getItem("namya_memories") || "[]"); } catch {}
@@ -202,7 +243,7 @@
       const r = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history, memories, images }),
+        body: JSON.stringify({ messages: history, memories, images, model: currentModel }),
       });
       const j = await r.json();
       if (j.reply) {

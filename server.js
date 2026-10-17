@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
-import { handleChat } from "./lib/assistant.js";
+import { handleChat, getModels, defaultModelId } from "./lib/assistant.js";
 
 dotenv.config();
 
@@ -19,16 +19,25 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.post("/api/chat", async (req, res) => {
   try {
-    const { messages, memories, images } = req.body;
+    const { messages, memories, images, model } = req.body;
     if (!Array.isArray(messages)) return res.status(400).json({ error: "messages must be an array" });
     const { reply, newMemories } = await handleChat(messages, {
       memories: Array.isArray(memories) ? memories : [],
       images: Array.isArray(images) ? images : [],
+      model: typeof model === "string" ? model : undefined,
     });
     res.json({ reply, newMemories });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "Assistant error — check server logs and your API key." });
+  }
+});
+
+app.get("/api/models", async (req, res) => {
+  try {
+    res.json({ models: await getModels(), def: defaultModelId() });
+  } catch (e) {
+    res.status(500).json({ error: "Could not list models." });
   }
 });
 
