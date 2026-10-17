@@ -16,6 +16,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ reply, newMemories });
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: "Assistant error — check the GROQ_API_KEY variable (or NAMYA_API_BASE for local mode)." });
+    return res.status(500).json({ error: "Assistant error — check GROQ_API_KEY / GEMINI_API_KEY in Vercel (or NAMYA_API_BASE for local mode)." });
   }
 }
